@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Taller 20: Constructor visual de páginas web - Programación Web Creativa II - Universidad de Caldas">
+  <title>WebBuilder | Taller 20</title>
+  <link rel="stylesheet" href="styles.css">
+  <!-- Estilos generados dinámicamente para la página que se está construyendo -->
+  <style id="pageStyle"></style>
+</head>
+<body>
+  <div class="ed-app" id="app">
+
+    <!-- ========== BARRA SUPERIOR ========== -->
+    <header class="ed-topbar">
+      <div class="ed-brand">
+        <span class="ed-logo" aria-hidden="true">W</span>
+        <div class="ed-brand-text">
+          <strong>WebBuilder</strong>
+          <small>Taller 20 · Constructor visual</small>
+        </div>
+      </div>
+
+      <div class="ed-project">
+        <label for="projectName" class="ed-sr">Nombre del proyecto</label>
+        <input type="text" id="projectName" maxlength="40" placeholder="Nombre del proyecto" autocomplete="off">
+        <span class="ed-status" id="saveStatus" aria-live="polite"></span>
+      </div>
+
+      <div class="ed-group" role="group" aria-label="Tamaño de visualización">
+        <button type="button" class="ed-tool active" data-action="device" data-device="desktop" aria-pressed="true" title="Escritorio">🖥 <span>Escritorio</span></button>
+        <button type="button" class="ed-tool" data-action="device" data-device="tablet" aria-pressed="false" title="Tableta (768 px)">▭ <span>Tableta</span></button>
+        <button type="button" class="ed-tool" data-action="device" data-device="mobile" aria-pressed="false" title="Móvil (375 px)">▯ <span>Móvil</span></button>
+      </div>
+
+      <div class="ed-group" role="group" aria-label="Modo de trabajo">
+        <button type="button" class="ed-tool active" data-action="mode" data-mode="edit" aria-pressed="true" title="Modo edición">✎ <span>Edición</span></button>
+        <button type="button" class="ed-tool" data-action="mode" data-mode="preview" aria-pressed="false" title="Modo vista previa">👁 <span>Vista previa</span></button>
+      </div>
+
+      <div class="ed-actions">
+        <button type="button" class="ed-btn" data-action="new-page" title="Crear una página en blanco">＋ Nueva</button>
+        <button type="button" class="ed-btn" data-action="save" title="Guardar en LocalStorage">💾 Guardar</button>
+        <button type="button" class="ed-btn" data-action="open-projects" title="Recuperar un proyecto guardado">📂 Recuperar</button>
+        <button type="button" class="ed-btn" data-action="show-code" title="Ver el HTML y CSS generados">&lt;/&gt; Código</button>
+        <button type="button" class="ed-btn ed-btn-primary" data-action="export" title="Descargar la página como archivo HTML">⬇ Exportar HTML</button>
+        <button type="button" class="ed-btn ed-btn-danger" data-action="reset" title="Restablecer el editor">↺ Restablecer</button>
+      </div>
+    </header>
+
+    <!-- ========== PANEL LATERAL DE COMPONENTES ========== -->
+    <aside class="ed-left" aria-label="Panel de componentes">
+      <h2>Componentes</h2>
+      <p class="ed-hint">Haz clic para agregar. Se insertan después del componente seleccionado.</p>
+      <div class="ed-palette">
+        <button type="button" class="ed-item" data-action="add" data-type="heading"><span class="ed-ico">H</span>Encabezado</button>
+        <button type="button" class="ed-item" data-action="add" data-type="paragraph"><span class="ed-ico">¶</span>Párrafo</button>
+        <button type="button" class="ed-item" data-action="add" data-type="image"><span class="ed-ico">▣</span>Imagen</button>
+        <button type="button" class="ed-item" data-action="add" data-type="button"><span class="ed-ico">▭</span>Botón</button>
+        <button type="button" class="ed-item" data-action="add" data-type="card"><span class="ed-ico">▤</span>Tarjeta</button>
+        <button type="button" class="ed-item" data-action="add" data-type="section"><span class="ed-ico">▦</span>Sección</button>
+        <button type="button" class="ed-item" data-action="add" data-type="list"><span class="ed-ico">☰</span>Lista</button>
+        <button type="button" class="ed-item" data-action="add" data-type="block"><span class="ed-ico">◼</span>Bloque</button>
+      </div>
+
+      <h2>Estructura</h2>
+      <div class="ed-layers" id="layers"></div>
+    </aside>
+
+    <!-- ========== ÁREA CENTRAL DE EDICIÓN Y VISTA PREVIA ========== -->
+    <main class="ed-center" id="main">
+      <div class="ed-stage" id="stage">
+        <div class="ed-device" id="device" data-device="desktop">
+          <div class="page" id="page"></div>
+          <div class="ed-empty" id="canvasEmpty" hidden>
+            <strong>Tu página está vacía</strong>
+            <span>Agrega componentes desde el panel izquierdo.</span>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- ========== PANEL DE PROPIEDADES ========== -->
+    <aside class="ed-right" aria-label="Panel de propiedades">
+      <h2 id="propsTitle">Propiedades</h2>
+      <div id="props"></div>
+    </aside>
+  </div>
+
+  <!-- ========== VENTANA: CÓDIGO GENERADO ========== -->
+  <div class="ed-modal" id="codeModal" role="dialog" aria-modal="true" aria-labelledby="codeTitle" hidden>
+    <div class="ed-modal-box ed-modal-wide">
+      <div class="ed-modal-head">
+        <h3 id="codeTitle">Código generado</h3>
+        <button type="button" class="ed-close" data-action="close-modal" data-modal="codeModal" aria-label="Cerrar">✕</button>
+      </div>
+      <div class="ed-tabs" role="tablist">
+        <button type="button" class="ed-tab active" data-action="code-tab" data-tab="html" role="tab">HTML</button>
+        <button type="button" class="ed-tab" data-action="code-tab" data-tab="css" role="tab">CSS</button>
+        <button type="button" class="ed-tab" data-action="code-tab" data-tab="doc" role="tab">Documento completo</button>
+        <button type="button" class="ed-btn ed-btn-primary ed-copy" data-action="copy-code">Copiar</button>
+      </div>
+      <pre class="ed-code" id="codeOutput" tabindex="0"></pre>
+    </div>
+  </div>
+
+  <!-- ========== VENTANA: PROYECTOS GUARDADOS ========== -->
+  <div class="ed-modal" id="projectsModal" role="dialog" aria-modal="true" aria-labelledby="projectsTitle" hidden>
+    <div class="ed-modal-box">
+      <div class="ed-modal-head">
+        <h3 id="projectsTitle">Proyectos guardados</h3>
+        <button type="button" class="ed-close" data-action="close-modal" data-modal="projectsModal" aria-label="Cerrar">✕</button>
+      </div>
+      <div id="projectsList"></div>
+    </div>
+  </div>
+
+  <div class="ed-toasts" id="toasts" aria-live="polite"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
